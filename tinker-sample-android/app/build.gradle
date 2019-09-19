@@ -112,13 +112,19 @@ android {
 //    }
 
 //    //use to test flavors support
+//    flavorDimensions "version"
 //    productFlavors {
-//        flavor1 {
-//            applicationId 'tinker.sample.android.flavor1'
+//        yingyongbao {
+//            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "yingyongbao"]
 //        }
-//
-//        flavor2 {
-//            applicationId 'tinker.sample.android.flavor2'
+//        wandoujia {
+//            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "wandoujia"]
+//        }
+//        xiaomi {
+//            manifestPlaceholders = [UMENG_CHANNEL_VALUE: "xiaomi"]
+//        }
+//        productFlavors.all {
+//            flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
 //        }
 //    }
 
