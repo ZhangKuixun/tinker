@@ -50,14 +50,11 @@ public class SampleResultService extends DefaultTinkerResultService {
         TinkerServiceInternals.killTinkerPatchServiceProcess(getApplicationContext());
 
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (result.isSuccess) {
-                    Toast.makeText(getApplicationContext(), "patch success, please restart process", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "patch fail, please check reason", Toast.LENGTH_LONG).show();
-                }
+        handler.post(() -> {
+            if (result.isSuccess) {
+                Toast.makeText(getApplicationContext(), "patch success, please restart process", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "patch fail, please check reason", Toast.LENGTH_LONG).show();
             }
         });
         // is success and newPatch, it is nice to delete the raw file, and restart at once
@@ -68,19 +65,14 @@ public class SampleResultService extends DefaultTinkerResultService {
             //not like TinkerResultService, I want to restart just when I am at background!
             //if you have not install tinker this moment, you can use TinkerApplicationHelper api
             if (checkIfNeedKill(result)) {
-                if (Utils.isBackground()) {
+                if (Utils.isBackground()) {//如果应用退出后台，把进程杀掉
                     TinkerLog.i(TAG, "it is in background, just restart process");
                     restartProcess();
                 } else {
                     //we can wait process at background, such as onAppBackground
                     //or we can restart when the screen off
                     TinkerLog.i(TAG, "tinker wait screen to restart process");
-                    new Utils.ScreenState(getApplicationContext(), new Utils.ScreenState.IOnScreenOff() {
-                        @Override
-                        public void onScreenOff() {
-                            restartProcess();
-                        }
-                    });
+                    new Utils.ScreenState(getApplicationContext(), this::restartProcess);
                 }
             } else {
                 TinkerLog.i(TAG, "I have already install the newly patch version!");
